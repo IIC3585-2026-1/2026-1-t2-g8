@@ -25,6 +25,38 @@ function query(data) {
                 )
             )
         },
+        orderBy: (atributo, orden) => {
+            // orden = "asc" | "desc"
+            return query(copia.slice().sort((a, b) => { // slice() es para hacer una copia del array original y no modificarlo
+                if (orden === "asc") {
+                    return a[atributo] - b[atributo]
+                } else {
+                    return b[atributo] - a[atributo]
+                }
+            }))
+        },
+        groupBy: (atributo) => {
+            // Agrupa por atributo y retorna un array de objetos.
+            const gruposPorKey = copia.reduce((acumulador, item) => {
+                console.log(item[atributo])
+                const key = item[atributo]
+                const grupoActual = acumulador[key] || []
+                console.log(grupoActual)
+
+                return {
+                    ...acumulador,
+                    [key]: [...grupoActual, { ...item }] // Agrega el item al grupo actual
+                }
+            }, {})
+
+            // Convertimos el objeto de grupos a un array de objetos con el atributo y el array de items
+            const gruposComoArray = Object.entries(gruposPorKey).map(([key, items]) => ({
+                [atributo]: key,
+                items
+            }))
+
+            return query(gruposComoArray)
+        },
         execute: () => {return copia}
     }
 }
@@ -33,7 +65,20 @@ const users = [
     { id: 1, name: 'Ana', age: 25, city: 'Santiago' },
     { id: 2, name: 'Luis', age: 35, city: 'Valparaíso' },
     { id: 3, name: 'Carla', age: 32, city: 'Santiago' },
-    { id: 4, name: 'Pedro', age: 28, city: 'Concepción' }
+    { id: 4, name: 'Pedro', age: 28, city: 'Concepción' },
+    { id: 5, name: 'Vicente', age: 19, city: 'Santiago' },
+    { id: 6, name: 'Maria', age: 46, city: 'Valparaíso' },
+    { id: 7, name: 'Antonia', age: 66, city: 'Santiago' },
+    { id: 8, name: 'Emilia', age: 80, city: 'Concepción' },
+    { id: 9, name: 'Juan', age: 9, city: 'Santiago' },
+    { id: 10, name: 'Jorge', age: 7, city: 'Valparaíso' },
+    { id: 11, name: 'Carmen', age: 45, city: 'Concepción' },
+    { id: 12, name: 'Fernando', age: 34, city: 'Santiago' },
 ]
 
-console.log(query(users).where(u => u.age > 25).select(['name', 'city']).execute())
+// console.log(query(users).where(u => u.age > 25).select(['name', 'city']).execute())
+// console.log(query(users).where(u => u.age > 25).orderBy('age', 'asc').select(['name', 'city']).execute())
+// console.log(query(users).where(u => u.age > 25).groupBy('city').execute())
+
+const result = query(users).where(u => u.age > 25).select(['name', 'city']).groupBy('city').execute()
+console.dir(result, { depth: null })
