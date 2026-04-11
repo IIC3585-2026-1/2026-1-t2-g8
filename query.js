@@ -38,11 +38,8 @@ function query(data) {
         groupBy: (atributo) => {
             // Agrupa por atributo y retorna un array de objetos.
             const gruposPorKey = copia.reduce((acumulador, item) => {
-                console.log(item[atributo])
                 const key = item[atributo]
                 const grupoActual = acumulador[key] || []
-                console.log(grupoActual)
-
                 return {
                     ...acumulador,
                     [key]: [...grupoActual, { ...item }] // Agrega el item al grupo actual
@@ -57,7 +54,39 @@ function query(data) {
 
             return query(gruposComoArray)
         },
-        execute: () => {return copia}
+        aggregate: (aggregations) => {
+            // aggregate está escritp para usarse después de groupBy.
+            // En ese caso cada elemento de 'copia' tiene la forma:
+            // { atributoAgrupado: valor, items: [ ...elementosDelGrupo ] }
+
+            // El motivo de hacerlo de esta forma es para seguir el mismo patrón que SQL:
+            // primero groupBy crea grupos y luego aggregate aplica/calcula funciones sobre cada grupo.
+
+            const applyAggregations = (items, aggregations) => {
+                // Recorre las funciones de agregación (count, avg, etc.)
+                // y construye un objeto con los resultados para ese grupo.
+                const aggregationsArray = Object.entries(aggregations)
+                return aggregationsArray.reduce(
+                    (acc, [name, fn]) => ({ ...acc, [name]: fn(items) }),
+                    {}
+                )
+            }
+
+            const aggregateGroup = (group, aggregations) => {
+                const { items, ...key } = group
+                return { ...key, ...applyAggregations(items, aggregations) }
+            }
+
+            return query(copia.map(group => aggregateGroup(group, aggregations)))
+        },
+
+        limit: (n) => {
+            return query(copia.slice(0, n))
+        },
+
+        execute: () => {
+            return copia
+        }
     }
 }
 
@@ -78,7 +107,18 @@ const users = [
 
 // console.log(query(users).where(u => u.age > 25).select(['name', 'city']).execute())
 // console.log(query(users).where(u => u.age > 25).orderBy('age', 'asc').select(['name', 'city']).execute())
-// console.log(query(users).where(u => u.age > 25).groupBy('city').execute())
 
-const result = query(users).where(u => u.age > 25).select(['name', 'city']).groupBy('city').execute()
-console.dir(result, { depth: null })
+// const result = query(users).where(u => u.age > 25).select(['name', 'city']).groupBy('city').execute()
+// console.dir(result, { depth: null })
+
+
+// function average(arr) {
+//   if (arr.length === 0) return 0
+//   return arr.reduce((a,b) => a + b, 0) / arr.length
+// }
+
+// // Prueba con aggregate
+// console.log(query(users).groupBy('city').aggregate({count: items => items.length, avgAge: items => average(items.map(x => x.age))}).execute())
+
+// Prueba con limit
+// console.dir(query(users).where(u => u.age > 25).groupBy('city').limit(1).execute(), { depth: null })
