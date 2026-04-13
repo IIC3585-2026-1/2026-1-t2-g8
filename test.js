@@ -51,6 +51,14 @@ console.log(query(users).groupBy('city').aggregate({
 console.log("\n=== limit 3 ===")
 console.log(query(users).limit(3).execute())
 
+// --- skip ---
+console.log("\n=== skip 3 ===")
+console.log(query(users).skip(3).execute())
+
+// --- distinct ---
+console.log("\n=== distinct city ===")
+console.log(query(users).distinct('city').execute())
+
 // --- ALL: where + select + orderBy + groupBy + aggregate + limit ---
 console.log("\n=== ALL: where + groupBy + aggregate + orderBy + select + limit ===")
 console.log(

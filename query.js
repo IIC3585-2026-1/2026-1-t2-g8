@@ -84,6 +84,23 @@ function query(data) {
             return query(copia.slice(0, n))
         },
 
+        skip: (n) => {
+            return query(copia.slice(n))
+        },
+
+        distinct: (atributo) => {
+            // Supuesto: se elimina solo por ese campo especifico (no como en sql que elimina por todos los campos)
+            // Esto es, si hay dos items con el mismo valor en el atributo, se elimina el segundo.
+            return query(copia.filter((item, indice, array) =>
+                array.findIndex(el => el[atributo] === item[atributo]) === indice
+            ))
+            // El findIndex es para encontrar el indice del primer elemento con el mismo valor en el atributo
+            // Si el indice es el mismo, significa que es el primer elemento con ese valor y se mantiene
+            // Si el indice es diferente, significa que es el segundo elemento con ese valor y se elimina
+            // ejemplo de uso
+            // query(users).distinct('city').execute()
+        },
+
         execute: () => {
             return copia
         }

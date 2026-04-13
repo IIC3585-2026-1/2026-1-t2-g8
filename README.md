@@ -96,6 +96,32 @@ Las funciones de agregación (como `count`, `avg`, etc.) se recorren y se constr
 
 `limit(n)` retorna solo los **primeros `n` elementos** del resultado.
 
+## `skip`
+
+`skip(n)` se salta los **primeros `n` elementos** y retorna todos los siguientes.
+
+## `distinct`
+
+`distinct(field)` elimina los elementos cuyo valor en el campo field ya apareció antes en el array, conservando solo la primera aparición.
+
+Diferencia con SQL:
+
+En SQL, DISTINCT requiere que **todos** los campos sean iguales para eliminar una fila. En esta implementación, `distinct(field)` elimina por un campo específico, aunque el resto de los campos sean distintos.
+
+Ejemplo:
+
+```
+// Entrada                                                                   
+{ id: 1, name: 'Ana',   city: 'Santiago' }   // ← se queda
+{ id: 2, name: 'Luis',  city: 'Valparaíso' } // ← se queda
+{ id: 3, name: 'Carla', city: 'Santiago' }   // ← se elimina, city ya apareció
+
+// Resultado
+{ id: 1, name: 'Ana',  city: 'Santiago'   }
+{ id: 2, name: 'Luis', city: 'Valparaíso' } 
+```
+Ana y Carla tienen distinto id y name, pero como city ya apareció, Carla se elimina.
+
 ---
 
 ## `execute`

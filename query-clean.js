@@ -65,6 +65,16 @@ function query(data) {
             return query(copia.slice(0, n))
         },
 
+        skip: (n) => {
+            return query(copia.slice(n))
+        },
+
+        distinct: (atributo) => {
+            return query(copia.filter((item, indice, array) =>
+                array.findIndex(el => el[atributo] === item[atributo]) === indice
+            ))
+        },
+
         execute: () => {
             return copia
         }
