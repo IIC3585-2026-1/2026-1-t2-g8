@@ -72,9 +72,13 @@ items: [ …elementosDelGrupo ]
 
 ## `aggregate`
 
-`aggregate` está escrito para usarse **después de `groupBy`**.
+`aggregate` aplica funciones de agregación (count, avg, etc) sobre los datos.
 
-En ese caso cada elemento tiene la forma:
+Puede usarse **tanto después de `groupBy` como sobre los datos originales**, siguiendo el comportamiento de SQL.
+
+### Caso 1: después de `groupBy`
+
+Cuando se usarse después de `groupBy`, cada elemento tiene la forma:
 
 ```
 {
@@ -83,12 +87,24 @@ items: [ …elementosDelGrupo ]
 }
 ```
 
-El motivo de hacerlo de esta forma es **seguir el mismo patrón que SQL**:
+En este caso, `aggregate` aplica las funciones de agregación **sobre los `items` de cada grupo**, generando un resultado por grupo.
+
+Esto sigue el patrón típico de SQL:
 
 1. `groupBy` crea los grupos
 2. `aggregate` aplica funciones de agregación sobre cada grupo
 
-Las funciones de agregación (como `count`, `avg`, etc.) se recorren y se construye un objeto con los resultados correspondientes a cada grupo.
+### Caso 2: sin `groupBy`
+
+Si `aggregate` se utiliza directamente sobre los datos, las funciones de agregación se aplican **sobre todo el dataset como un único grupo**.
+
+Esto es equivalente a consultas SQL como:
+
+```
+SELECT COUNT(*) FROM tabla;
+```
+
+En este caso el resultado es **un único objeto dentro de un array** con los valores agregados.
 
 ---
 

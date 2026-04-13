@@ -53,6 +53,10 @@ function query(data) {
                 )
             }
 
+            if (!copia[0]?.items) {
+                return query([{ ...applyAggregations(copia, aggregations) }])
+            }
+
             const aggregateGroup = (group, aggregations) => {
                 const { items, ...key } = group
                 return { ...key, ...applyAggregations(items, aggregations) }

@@ -35,6 +35,9 @@ console.log(query(users).orderBy('age', 'asc').execute())
 console.log("\n=== groupBy city ===")
 console.dir(query(users).groupBy('city').execute(), { depth: null })
 
+// --- aggregate ---
+console.log(query(users).aggregate({count: items => items.length}).execute())
+
 // --- groupBy + aggregate ---
 function average(arr) {
     if (arr.length === 0) return 0
