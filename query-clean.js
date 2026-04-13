@@ -13,8 +13,7 @@ function query(data) {
             }
 
             return query(
-                copia.map(item => filterAtributes(item)                    
-                )                
+                copia.map(item => filterAtributes(item))                
             )
         },        
 
