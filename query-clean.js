@@ -92,16 +92,18 @@ console.log(query(users).where(u => u.age > 25).execute())
 // const result = query(users).where(u => u.age > 25).select(['name', 'city']).groupBy('city').execute()
 // console.dir(result, { depth: null })
 
+// console.dir(query(users).groupBy('city').execute(), {depth: null})
+// console.log("\n\n")
+
+// --- Prueba con aggregate ---
+// console.dir(query(users).groupBy('city').execute(),{depth: null})
+
 // function average(arr) {
 //   if (arr.length === 0) return 0
 //   return arr.reduce((a,b) => a + b, 0) / arr.length
 // }
-
-// console.dir(query(users).groupBy('city').execute(), {depth: null})
 // console.log("\n\n")
-
-// // // Prueba con aggregate
 // console.log(query(users).groupBy('city').aggregate({count: items => items.length, avgAge: items => average(items.map(x => x.age))}).execute())
 
-// Prueba con limit
+// --- Prueba con limit ---
 // console.dir(query(users).where(u => u.age > 25).groupBy('city').limit(1).execute(), { depth: null })
